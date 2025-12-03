@@ -1,0 +1,54 @@
+# Docker Compose 配置示例 - RabbitMQ 方案
+# 使用方法：cp docker-compose.rabbitmq.example.yml docker-compose.yml
+
+version: '3.8'
+
+services:
+  # RabbitMQ 服务（作为 Celery Broker）
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq-gd25
+    ports:
+      - "5672:5672"    # AMQP 协议端口
+      - "15672:15672"  # Web 管理界面端口
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - gd25-network
+
+  # Redis 服务（作为 Result Backend，可选）
+  redis:
+    image: redis:7-alpine
+    container_name: redis-gd25
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: redis-cli ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - gd25-network
+
+volumes:
+  rabbitmq_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  gd25-network:
+    driver: bridge
+
