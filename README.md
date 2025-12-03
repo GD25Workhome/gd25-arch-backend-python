@@ -58,14 +58,38 @@ cp .env.example .env
 
 ### 4. 运行项目
 
+#### 方式一：使用 uvicorn 命令（推荐）
+
 ```bash
-# 启动开发服务器
+# 启动开发服务器（带自动重载）
 uvicorn app.main:app --reload
+
+# 指定主机和端口
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 # 访问 API 文档
 # Swagger UI: http://localhost:8000/docs
 # ReDoc: http://localhost:8000/redoc
 ```
+
+**命令说明：**
+- `uvicorn`：ASGI 服务器（处理 HTTP 请求）
+- `app.main:app`：应用路径（从 `app/main.py` 导入 `app` 应用实例）
+- `--reload`：开发模式，代码变化时自动重启
+
+#### 方式二：使用启动脚本
+
+```bash
+# 开发环境
+./scripts/start_dev.sh
+
+# 生产环境（需要先安装 gunicorn）
+./scripts/start_prod.sh
+```
+
+#### 详细说明
+
+关于启动方式的详细说明，请参考：[启动方式说明.md](./docs/启动方式说明.md)
 
 ## 项目结构
 

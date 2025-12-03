@@ -4,7 +4,7 @@
 提供数据库会话的创建、管理和依赖注入功能。
 """
 
-from typing import Generator
+from typing import Generator, Optional
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy import event
 
@@ -12,7 +12,7 @@ from app.db.database import get_engine
 
 
 # 全局会话工厂
-SessionLocal: sessionmaker[Session] = None
+_SessionLocal: Optional[sessionmaker[Session]] = None
 
 
 def get_session_local() -> sessionmaker[Session]:
@@ -22,17 +22,21 @@ def get_session_local() -> sessionmaker[Session]:
     Returns:
         sessionmaker[Session]: 数据库会话工厂
     """
-    global SessionLocal
+    global _SessionLocal
     
-    if SessionLocal is None:
+    if _SessionLocal is None:
         engine = get_engine()
-        SessionLocal = sessionmaker(
+        _SessionLocal = sessionmaker(
             autocommit=False,
             autoflush=False,
             bind=engine,
         )
     
-    return SessionLocal
+    return _SessionLocal
+
+
+# 导出会话工厂（用于直接访问）
+SessionLocal = get_session_local()
 
 
 def get_db() -> Generator[Session, None, None]:

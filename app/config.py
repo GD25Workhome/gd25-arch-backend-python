@@ -5,9 +5,32 @@
 提供配置扩展机制，允许项目添加自定义配置项。
 """
 
-from typing import List, Optional
-from pydantic import Field, field_validator
+from typing import List, Optional, Any, Dict, Annotated, Union
+from pydantic import Field, field_validator, BeforeValidator, model_validator, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def _parse_cors_origins(v: Any) -> List[str]:
+    """
+    解析 CORS 源列表
+    
+    支持多种格式：
+    - 字符串（逗号分隔）："http://localhost:3000,http://localhost:8080"
+    - 列表：["http://localhost:3000", "http://localhost:8080"]
+    - 空值：返回默认值
+    """
+    if v is None:
+        return ["http://localhost:3000", "http://localhost:8080"]
+    if isinstance(v, str):
+        # 处理空字符串
+        if not v.strip():
+            return ["http://localhost:3000", "http://localhost:8080"]
+        # 从字符串解析，支持逗号分隔
+        return [origin.strip() for origin in v.split(",") if origin.strip()]
+    elif isinstance(v, list):
+        return v
+    else:
+        return ["http://localhost:3000", "http://localhost:8080"]
 
 
 class Settings(BaseSettings):
@@ -53,15 +76,17 @@ class Settings(BaseSettings):
         return v
 
     # ==================== 数据库配置 ====================
-    database_url: str = Field(
-        ...,
+    database_url: Optional[str] = Field(
+        default=None,
         description="数据库连接 URL，格式：postgresql://user:password@host:port/dbname 或 mysql+pymysql://user:password@host:port/dbname",
     )
 
     @field_validator("database_url")
     @classmethod
-    def validate_database_url(cls, v: str) -> str:
+    def validate_database_url(cls, v: Optional[str]) -> Optional[str]:
         """验证数据库 URL 格式"""
+        if v is None:
+            return None
         if not v:
             raise ValueError("database_url 不能为空")
         # 基本格式检查
@@ -70,6 +95,21 @@ class Settings(BaseSettings):
                 "database_url 必须以 postgresql:// 或 mysql+pymysql:// 开头"
             )
         return v
+    
+    def validate_database_config(self) -> None:
+        """
+        验证数据库配置是否完整
+        
+        在应用启动时调用此方法，如果配置缺失会抛出清晰的错误信息。
+        
+        Raises:
+            ValueError: 当 database_url 未配置时抛出
+        """
+        if not self.database_url:
+            raise ValueError(
+                "database_url 未配置。请设置环境变量 DATABASE_URL 或在 .env 文件中配置。\n"
+                "示例：DATABASE_URL=postgresql://user:password@localhost:5432/dbname"
+            )
 
     # ==================== Redis 配置（可选）====================
     redis_url: Optional[str] = Field(
@@ -116,22 +156,30 @@ class Settings(BaseSettings):
         return v.lower()
 
     # ==================== CORS 配置 ====================
-    cors_origins: List[str] = Field(
-        default_factory=lambda: ["http://localhost:3000", "http://localhost:8080"],
-        description="CORS 允许的源列表，多个源用逗号分隔",
+    # 注意：使用 str 类型存储，避免 Pydantic Settings 尝试 JSON 解析
+    # 通过 @computed_field 提供列表形式的访问
+    cors_origins_str: Optional[str] = Field(
+        default=None,
+        alias="CORS_ORIGINS",  # 使用 alias 映射环境变量名
+        description="CORS 允许的源列表（字符串格式，多个源用逗号分隔）",
     )
 
-    @field_validator("cors_origins", mode="before")
-    @classmethod
-    def parse_cors_origins(cls, v) -> List[str]:
-        """解析 CORS 源列表"""
-        if isinstance(v, str):
-            # 从字符串解析，支持逗号分隔
-            return [origin.strip() for origin in v.split(",") if origin.strip()]
-        elif isinstance(v, list):
-            return v
-        else:
-            return []
+    @computed_field
+    @property
+    def cors_origins(self) -> List[str]:
+        """
+        获取 CORS 允许的源列表
+        
+        如果未配置，返回默认值。
+        支持逗号分隔的字符串格式。
+        """
+        if self.cors_origins_str is None or not self.cors_origins_str.strip():
+            return ["http://localhost:3000", "http://localhost:8080"]
+        return [
+            origin.strip()
+            for origin in self.cors_origins_str.split(",")
+            if origin.strip()
+        ]
 
     # ==================== 服务器配置 ====================
     host: str = Field(
@@ -168,7 +216,15 @@ class Settings(BaseSettings):
         获取同步数据库 URL
         
         如果使用异步数据库驱动，需要转换 URL。
+        
+        Raises:
+            ValueError: 当 database_url 未配置时抛出
         """
+        if not self.database_url:
+            raise ValueError(
+                "database_url 未配置。请先调用 validate_database_config() 验证配置，"
+                "或确保设置了 DATABASE_URL 环境变量。"
+            )
         return self.database_url
 
     def get_database_url_async(self) -> str:
@@ -177,7 +233,15 @@ class Settings(BaseSettings):
         
         将 postgresql:// 转换为 postgresql+asyncpg://
         将 mysql+pymysql:// 转换为 mysql+aiomysql://
+        
+        Raises:
+            ValueError: 当 database_url 未配置时抛出
         """
+        if not self.database_url:
+            raise ValueError(
+                "database_url 未配置。请先调用 validate_database_config() 验证配置，"
+                "或确保设置了 DATABASE_URL 环境变量。"
+            )
         url = self.database_url
         if url.startswith("postgresql://"):
             return url.replace("postgresql://", "postgresql+asyncpg://", 1)
@@ -200,4 +264,3 @@ settings = Settings()
 #     max_retries: int = Field(default=3, ge=1, le=10, description="最大重试次数")
 #
 # project_settings = ProjectSettings()
-

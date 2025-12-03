@@ -90,4 +90,5 @@ def check_connection() -> bool:
 
 # 导出引擎实例（用于直接访问）
 # 注意：直接使用 get_engine() 函数获取引擎实例
+engine = get_engine()
 
