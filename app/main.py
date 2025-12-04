@@ -295,6 +295,71 @@ async def get_version() -> Dict[str, Any]:
     return success_response(data=version_info, message="版本信息获取成功")
 
 
+# ==================== WebSocket 路由 ====================
+
+from fastapi import WebSocket, WebSocketDisconnect
+from app.websocket import SimpleWebSocketHandler, manager
+
+
+@app.websocket("/ws/{user_id}")
+async def websocket_endpoint(websocket: WebSocket, user_id: str):
+    """
+    WebSocket 连接端点
+    
+    提供 WebSocket 连接功能，支持实时消息推送。
+    
+    Args:
+        websocket: WebSocket 连接对象
+        user_id: 用户 ID（从路径参数获取）
+        
+    Example:
+        ```javascript
+        // 客户端连接示例
+        const ws = new WebSocket('ws://localhost:8000/ws/test_user');
+        
+        ws.onopen = () => {
+            console.log('Connected');
+        };
+        
+        ws.onmessage = (event) => {
+            console.log('Received:', JSON.parse(event.data));
+        };
+        
+        ws.onerror = (error) => {
+            console.error('Error:', error);
+        };
+        
+        // 发送消息
+        ws.send(JSON.stringify({
+            type: 'ping',
+            timestamp: Date.now()
+        }));
+        ```
+    """
+    # 创建处理器并处理连接
+    handler = SimpleWebSocketHandler(user_id)
+    await handler.handle_connection(websocket)
+
+
+@app.get("/ws/stats", tags=["WebSocket"])
+async def websocket_stats() -> Dict[str, Any]:
+    """
+    WebSocket 连接统计接口
+    
+    返回当前 WebSocket 连接的统计信息。
+    
+    Returns:
+        dict: 连接统计信息，包括总连接数、已连接用户数等
+    """
+    stats = {
+        "total_connections": manager.get_total_connections_count(),
+        "connected_users_count": len(manager.get_connected_users()),
+        "connected_users": list(manager.get_connected_users()),
+    }
+    
+    return success_response(data=stats, message="WebSocket 统计信息获取成功")
+
+
 # ==================== API 路由注册 ====================
 
 # 这里可以注册其他 API 路由

@@ -22,6 +22,12 @@ if [ -n "$FLOWER_URL_PREFIX" ]; then
     CMD="${CMD} --url_prefix=${FLOWER_URL_PREFIX}"
 fi
 
+# 添加 Broker API 配置（解决 Management API 连接问题）
+# 如果配置了 RabbitMQ Management API 地址，使用它
+if [ -n "$RABBITMQ_MANAGEMENT_URL" ]; then
+    CMD="${CMD} --broker_api=${RABBITMQ_MANAGEMENT_URL}"
+fi
+
 # 启动 Flower
 echo "启动 Flower 监控服务..."
 echo "访问地址: http://localhost:${FLOWER_PORT}${FLOWER_URL_PREFIX}"

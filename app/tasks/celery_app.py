@@ -20,19 +20,25 @@ def make_celery_app() -> Celery:
     创建并配置 Celery 应用实例
     
     根据配置创建 Celery 应用，支持 RabbitMQ 或 Redis 作为 Broker。
-    如果未配置，使用默认值（RabbitMQ）。
+    必须通过环境变量 CELERY_BROKER_URL 配置 Broker URL，不允许使用硬编码的凭证。
     
     Returns:
         Celery: 配置好的 Celery 应用实例
+    
+    Raises:
+        ValueError: 当 CELERY_BROKER_URL 未配置时抛出
     """
-    # 获取 Broker URL，默认使用 RabbitMQ
+    # 获取 Broker URL，必须通过环境变量配置
     broker_url = settings.celery_broker_url
     if not broker_url:
-        # 默认使用 RabbitMQ（开发环境）
-        broker_url = "amqp://admin:admin123@localhost:5672/"
-        logger.warning(
-            "CELERY_BROKER_URL 未配置，使用默认值: amqp://admin:admin123@localhost:5672/"
+        error_msg = (
+            "CELERY_BROKER_URL 未配置。请设置环境变量 CELERY_BROKER_URL 或在 .env 文件中配置。\n"
+            "示例：CELERY_BROKER_URL=amqp://user:password@localhost:5672/\n"
+            "或使用 Redis：CELERY_BROKER_URL=redis://localhost:6379/0\n"
+            "注意：为了安全，不允许在代码中使用硬编码的凭证。"
         )
+        logger.error(error_msg)
+        raise ValueError(error_msg)
     
     # 获取 Result Backend URL（可选）
     result_backend = settings.celery_result_backend
@@ -140,4 +146,3 @@ celery_app = make_celery_app()
 
 # ==================== 导出 ====================
 __all__ = ["celery_app", "make_celery_app"]
-

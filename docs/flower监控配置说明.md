@@ -269,6 +269,53 @@ sudo systemctl status flower
 - 检查 Worker 是否连接到同一个 Broker
 - 检查 Worker 的日志，确认连接正常
 
+### 5. Inspect 方法失败和 Management API 错误
+
+**问题**：Flower 启动后出现以下警告和错误：
+```
+[W] Inspect method conf failed
+[W] Inspect method active failed
+[W] Inspect method stats failed
+[E] RabbitMQ management API call failed: Stream closed
+```
+
+**原因分析**：
+1. **没有 Celery Worker 在运行**：Inspect 方法需要通过 Worker 获取信息，如果没有 Worker，这些方法会失败
+2. **Management API 连接问题**：Flower 尝试通过 RabbitMQ Management API 获取信息时连接被关闭
+
+**解决方案**：
+
+1. **启动 Celery Worker**（最重要）：
+```bash
+# 使用启动脚本（推荐）
+bash scripts/start_worker.sh
+
+# 或直接使用命令
+celery -A app.tasks.celery_app worker --loglevel=info
+```
+
+2. **配置 RabbitMQ Management API 地址**（可选，通常不需要）：
+```bash
+# 在启动 Flower 时指定 Management API 地址
+RABBITMQ_MANAGEMENT_URL=http://admin:admin123@localhost:15672/api \
+    bash scripts/start_flower.sh
+```
+
+3. **验证 RabbitMQ Management 插件已启用**：
+```bash
+# 检查容器是否使用 management 镜像
+docker ps | grep rabbitmq
+
+# 应该看到 rabbitmq:3-management-alpine 或类似镜像
+# 访问 Web 管理界面验证：http://localhost:15672
+```
+
+**注意**：
+- 这些警告和错误**不会影响 Flower 的基本功能**，Web 界面仍然可以正常访问
+- 但是**无法显示 Worker 和任务的详细信息**，直到启动 Worker 后才会正常
+- 如果只是查看 Flower 界面，可以忽略这些警告
+- 如果需要监控 Worker 和任务，必须启动 Celery Worker
+
 ## 与 Celery Worker 配合使用
 
 ### 启动顺序
@@ -283,7 +330,10 @@ sudo systemctl status flower
 # 1. 启动 RabbitMQ（如果使用 Docker）
 docker start rabbitmq-gd25
 
-# 2. 启动 Celery Worker
+# 2. 启动 Celery Worker（使用启动脚本，推荐）
+bash scripts/start_worker.sh
+
+# 或直接使用命令
 celery -A app.tasks.celery_app worker --loglevel=info
 
 # 3. 启动 Flower（新终端窗口）

@@ -34,35 +34,49 @@ from app.tasks.examples import (
 
 def test_celery_app_initialization():
     """测试 Celery 应用初始化"""
-    assert celery_app is not None
-    assert isinstance(celery_app, Celery)
-    assert celery_app.main == "gd25-arch-backend"
+    with patch("app.tasks.celery_app.settings") as mock_settings:
+        mock_settings.celery_broker_url = "amqp://test:test@localhost:5672/"
+        mock_settings.celery_result_backend = None
+        
+        app = make_celery_app()
+        assert app is not None
+        assert isinstance(app, Celery)
+        assert app.main == "gd25-arch-backend"
 
 
 def test_celery_app_configuration():
     """测试 Celery 应用配置"""
-    # 测试序列化配置
-    assert celery_app.conf.task_serializer == "json"
-    assert celery_app.conf.accept_content == ["json"]
-    assert celery_app.conf.result_serializer == "json"
-    
-    # 测试超时配置
-    assert celery_app.conf.task_soft_time_limit == 300
-    assert celery_app.conf.task_time_limit == 600
-    assert celery_app.conf.task_acks_late is True
-    assert celery_app.conf.task_reject_on_worker_lost is True
-    
-    # 测试 Worker 配置
-    assert celery_app.conf.worker_prefetch_multiplier == 4
-    assert celery_app.conf.worker_max_tasks_per_child == 1000
+    with patch("app.tasks.celery_app.settings") as mock_settings:
+        mock_settings.celery_broker_url = "amqp://test:test@localhost:5672/"
+        mock_settings.celery_result_backend = None
+        
+        app = make_celery_app()
+        # 测试序列化配置
+        assert app.conf.task_serializer == "json"
+        assert app.conf.accept_content == ["json"]
+        assert app.conf.result_serializer == "json"
+        
+        # 测试超时配置
+        assert app.conf.task_soft_time_limit == 300
+        assert app.conf.task_time_limit == 600
+        assert app.conf.task_acks_late is True
+        assert app.conf.task_reject_on_worker_lost is True
+        
+        # 测试 Worker 配置
+        assert app.conf.worker_prefetch_multiplier == 4
+        assert app.conf.worker_max_tasks_per_child == 1000
 
 
 def test_make_celery_app():
     """测试 make_celery_app 函数"""
-    app = make_celery_app()
-    assert app is not None
-    assert isinstance(app, Celery)
-    assert app.main == "gd25-arch-backend"
+    with patch("app.tasks.celery_app.settings") as mock_settings:
+        mock_settings.celery_broker_url = "amqp://test:test@localhost:5672/"
+        mock_settings.celery_result_backend = None
+        
+        app = make_celery_app()
+        assert app is not None
+        assert isinstance(app, Celery)
+        assert app.main == "gd25-arch-backend"
 
 
 def test_celery_app_with_custom_broker():
@@ -86,6 +100,16 @@ def test_celery_app_without_result_backend():
         assert app.conf.broker_url == "amqp://test:test@localhost:5672/"
         # 不配置 Result Backend 时，backend 可能为 None 或默认值
         # 这取决于 Celery 的默认行为
+
+
+def test_celery_app_without_broker_url():
+    """测试未配置 Broker URL 时抛出错误"""
+    with patch("app.tasks.celery_app.settings") as mock_settings:
+        mock_settings.celery_broker_url = None
+        mock_settings.celery_result_backend = None
+        
+        with pytest.raises(ValueError, match="CELERY_BROKER_URL 未配置"):
+            make_celery_app()
 
 
 # ==================== 基础任务类测试 ====================
