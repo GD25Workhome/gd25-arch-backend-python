@@ -120,11 +120,27 @@ class Settings(BaseSettings):
     # ==================== Celery 配置（可选）====================
     celery_broker_url: Optional[str] = Field(
         default=None,
-        description="Celery Broker URL，通常使用 Redis",
+        description="Celery Broker URL，支持 RabbitMQ (amqp://user:password@host:port/vhost) 或 Redis (redis://host:port/db)",
     )
     celery_result_backend: Optional[str] = Field(
         default=None,
-        description="Celery 结果后端 URL，通常使用 Redis",
+        description="Celery 结果后端 URL，支持 Redis (redis://host:port/db) 或 RabbitMQ (rpc://)",
+    )
+    
+    # ==================== Flower 监控配置（可选）====================
+    flower_port: int = Field(
+        default=5555,
+        description="Flower 监控服务端口",
+        ge=1,
+        le=65535,
+    )
+    flower_basic_auth: Optional[str] = Field(
+        default=None,
+        description="Flower 基本认证，格式：username:password（生产环境建议配置）",
+    )
+    flower_url_prefix: Optional[str] = Field(
+        default=None,
+        description="Flower URL 前缀（用于反向代理，如 /flower）",
     )
 
     # ==================== 日志配置 ====================
