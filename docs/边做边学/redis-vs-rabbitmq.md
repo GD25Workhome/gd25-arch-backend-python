@@ -184,7 +184,7 @@ volumes:
 
 需要更新以下文档：
 - `README.md` - 技术栈说明
-- `开发计划.md` - Celery 配置说明
+- `docs/开发计划.md` - Celery 配置说明
 - `.env.example` - 环境变量示例
 
 ## 三、URL 格式对比
@@ -279,7 +279,7 @@ Result Backend: Redis
 
 5. **更新文档**
    - README.md
-   - 开发计划.md
+   - docs/开发计划.md
    - .env.example
 
 ## 七、总结

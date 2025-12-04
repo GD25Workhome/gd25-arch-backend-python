@@ -89,7 +89,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 #### 详细说明
 
-关于启动方式的详细说明，请参考：[启动方式说明.md](./docs/启动方式说明.md)
+关于启动方式的详细说明，请参考：[启动方式说明.md](./docs/边做边学/启动方式说明.md)
 
 ## 项目结构
 
@@ -173,7 +173,7 @@ pytest tests/test_config.py
 
 ## 使用方式
 
-### 方式一：Git Clone + 自定义
+### 方式一：Git Clone + 自定义（推荐）
 
 ```bash
 # 1. Clone 脚手架仓库
@@ -188,15 +188,49 @@ git init
 pip install -r requirements.txt
 
 # 4. 配置环境变量
-cp .env.example .env
-# 编辑 .env 文件
+# 创建 .env 文件（参考配置说明）
+# 至少需要配置 DATABASE_URL
 
-# 5. 开始开发
+# 5. 初始化数据库
+alembic revision --autogenerate -m "Initial migration"
+alembic upgrade head
+
+# 6. 启动服务
+uvicorn app.main:app --reload
 ```
+
+### 快速开始
+
+**新用户请先阅读**：[快速开始指南](./docs/边做边学/快速开始指南.md)
+
+## 示例代码
+
+脚手架提供了完整的用户管理示例代码，展示如何从 Model 到 API 的完整开发流程：
+
+- **Model 示例**：`app/models/user.py` - 数据模型定义
+- **Schema 示例**：`app/schemas/user.py` - 数据验证和序列化
+- **Repository 示例**：`app/repositories/user_repository.py` - 数据访问层
+- **Service 示例**：`app/services/user_service.py` - 业务逻辑层
+- **API 示例**：`app/api/users.py` - API 路由
+
+**使用示例代码**：
+1. 在 `app/main.py` 中注册路由：`app.include_router(users_router, prefix="/api/v1")`
+2. 访问 API 文档：http://localhost:8000/docs
+3. 详细说明请参考：[示例代码使用说明](./docs/边做边学/示例代码使用说明.md)
+
+## 文档
+
+- [快速开始指南](./docs/边做边学/快速开始指南.md) - 10 分钟快速启动新项目
+- [示例代码使用说明](./docs/边做边学/示例代码使用说明.md) - 完整的示例代码说明
+- [启动方式说明](./docs/边做边学/启动方式说明.md) - 详细的启动方式说明
+- [测试执行说明](./docs/边做边学/测试执行说明.md) - 测试执行指南
+- [Repository 使用示例](./docs/边做边学/repository使用示例.md) - Repository 模式使用示例
+- [WebSocket 测试说明](./docs/边做边学/websocket测试说明.md) - WebSocket 功能测试
+- [开发计划](./docs/开发计划.md) - 详细的开发计划和里程碑
 
 ## 开发计划
 
-详细的开发计划请参考 [开发计划.md](./开发计划.md)
+详细的开发计划请参考 [开发计划.md](./docs/开发计划.md)
 
 ## 许可证
 
