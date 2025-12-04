@@ -1,9 +1,9 @@
 {
   "project_name": "my-project",
   "project_description": "FastAPI 后端项目",
-  "author_name": "GD25 Team",
-  "author_email": "team@gd25.com",
-  "python_version": "3.10",
+  "author_name": "xiaolong.shu",
+  "author_email": "985776854@qq.com",
+  "python_version": "3.11",
   "include_celery": "y",
   "include_websocket": "n",
   "database_type": "postgresql"

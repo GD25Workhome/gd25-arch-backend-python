@@ -1,5 +1,5 @@
-# FastAPI 后端脚手架 - 核心依赖
-# Python 3.10+
+# {{ cookiecutter.project_name }} - 核心依赖
+# Python {{ cookiecutter.python_version }}+
 
 # Web 框架
 fastapi>=0.104.0,<1.0.0

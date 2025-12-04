@@ -1,0 +1,49 @@
+# {{ cookiecutter.project_name }} - 依赖锁定文件
+# 此文件包含所有已安装包的精确版本，用于生产环境部署
+# 生成时间：请在使用时更新
+# Python 版本：{{ cookiecutter.python_version }}
+#
+# 使用方法：
+#   pip install -r requirements.lock
+#
+# 注意：此文件包含所有依赖（包括开发依赖），生产环境建议只安装 requirements.txt
+#
+# 生成方法：
+#   1. 安装依赖：pip install -r requirements.txt -r requirements-dev.txt
+#   2. 生成锁定文件：pip freeze > requirements.lock
+#   3. 或使用 pip-tools：pip-compile requirements.txt requirements-dev.txt
+
+# 核心依赖
+# 注意：以下版本仅供参考，实际使用时请根据项目需求调整
+# 建议在项目初始化后重新生成此文件
+
+fastapi>=0.104.0,<1.0.0
+uvicorn[standard]>=0.24.0,<1.0.0
+sqlalchemy>=2.0.0,<3.0.0
+alembic>=1.12.0,<2.0.0
+psycopg2-binary>=2.9.0,<3.0.0  # PostgreSQL 驱动
+pymysql>=1.1.0,<2.0.0  # MySQL 驱动
+pydantic>=2.5.0,<3.0.0
+pydantic-settings>=2.1.0,<3.0.0
+python-dotenv>=1.0.0,<2.0.0
+{% if cookiecutter.include_celery == 'y' %}
+celery>=5.3.0,<6.0.0
+redis>=5.0.0,<6.0.0
+flower>=2.0.0,<3.0.0
+{% endif %}
+
+# 开发依赖
+black>=23.11.0,<24.0.0
+flake8>=6.1.0,<7.0.0
+isort>=5.12.0,<6.0.0
+mypy>=1.7.0,<2.0.0
+pytest>=7.4.0,<8.0.0
+pytest-asyncio>=0.21.0,<1.0.0
+pytest-cov>=4.1.0,<5.0.0
+httpx>=0.25.0,<1.0.0
+
+# 注意：此文件是模板文件，实际使用时请：
+# 1. 安装依赖后运行：pip freeze > requirements.lock
+# 2. 或使用 pip-tools：pip-compile requirements.txt requirements-dev.txt
+# 3. 根据实际安装的版本更新此文件
+
