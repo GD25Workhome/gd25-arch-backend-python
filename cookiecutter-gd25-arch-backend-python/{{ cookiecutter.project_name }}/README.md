@@ -1,6 +1,6 @@
-# gd25-arch-backend-python
+# {{ cookiecutter.project_name }}
 
-FastAPI 后端脚手架 - 通用的项目基础框架
+{{ cookiecutter.project_description }}
 
 ## 项目简介
 
@@ -94,7 +94,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ## 项目结构
 
 ```
-gd25-arch-backend-python/
+{{ cookiecutter.project_name }}/
 ├── app/                    # 应用主目录
 │   ├── api/               # API 路由
 │   ├── services/          # 业务逻辑层
@@ -173,9 +173,7 @@ pytest tests/test_config.py
 
 ## 使用方式
 
-本项目支持两种使用方式，推荐使用 **方式二（CookieCutter 模板）**，更快速、更灵活。
-
-### 方式一：Git Clone + 自定义
+### 方式一：Git Clone + 自定义（推荐）
 
 ```bash
 # 1. Clone 脚手架仓库
@@ -201,32 +199,23 @@ alembic upgrade head
 uvicorn app.main:app --reload
 ```
 
-### 方式二：CookieCutter 模板（✅ 已就绪，推荐使用）
-
-CookieCutter 模板已创建完成，可以直接使用。支持两种使用方式：
-
-#### 方式 A：使用本地模板（同一台电脑）
+### 方式二：CookieCutter 模板（推荐，实施中）
 
 ```bash
 # 1. 安装 CookieCutter（如果未安装）
 pip install cookiecutter
 
-# 2. 使用本地模板生成项目
-# 方式 A1：如果模板在当前目录下
-cookiecutter ./cookiecutter-gd25-arch-backend-python
+# 2. 使用模板生成项目
+cookiecutter cookiecutter-gd25-arch-backend-python
 
-# 方式 A2：使用绝对路径（推荐）
-cookiecutter /path/to/gd25-arch-backend-python/cookiecutter-gd25-arch-backend-python
+# 或从 GitHub 使用
+cookiecutter https://github.com/your-org/cookiecutter-gd25-arch-backend-python
 
 # 3. 按提示输入项目信息
 # project_name [my-project]: my-awesome-api
-# project_description [FastAPI 后端项目]: 我的第一个 API 项目
-# author_name [GD25 Team]: 你的名字
-# author_email [team@gd25.com]: your-email@example.com
-# python_version [3.10]: 3.11
 # include_celery [y]: y
 # include_websocket [n]: n
-# database_type [postgresql]: postgresql
+# ...
 
 # 4. 进入生成的项目目录
 cd my-awesome-api
@@ -236,7 +225,7 @@ pip install -r requirements.txt
 
 # 6. 配置环境变量
 cp .env.example .env
-# 编辑 .env 文件，至少配置 DATABASE_URL
+# 编辑 .env 文件
 
 # 7. 初始化数据库
 alembic revision --autogenerate -m "Initial migration"
@@ -246,39 +235,11 @@ alembic upgrade head
 uvicorn app.main:app --reload
 ```
 
-#### 方式 B：从 GitHub 使用（如果已发布到 GitHub）
-
-```bash
-# 1. 安装 CookieCutter（如果未安装）
-pip install cookiecutter
-
-# 2. 从 GitHub 使用模板（会自动克隆）
-cookiecutter https://github.com/your-org/cookiecutter-gd25-arch-backend-python
-
-# 3. 按提示输入项目信息（同方式 A 的步骤 3）
-
-# 4-8. 后续步骤同方式 A
-```
-
 **详细使用说明**：请参考 [CookieCutter 使用指南](./docs/边做边学/CookieCutter使用指南.md)
 
-**模板位置**：`cookiecutter-gd25-arch-backend-python/`（在当前项目根目录下）
+### 快速开始
 
-## 快速开始（新用户必读）
-
-**推荐流程：**
-
-1. **选择使用方式**
-   - ✅ **推荐**：使用 CookieCutter 模板（方式二）- 自动替换变量，支持可选模块
-   - 备选：Git Clone + 自定义（方式一）- 需要手动修改文件
-
-2. **阅读文档**
-   - [快速开始指南](./docs/边做边学/快速开始指南.md) - 10 分钟快速启动
-   - [CookieCutter 使用指南](./docs/边做边学/CookieCutter使用指南.md) - CookieCutter 详细说明（如果使用方式二）
-
-3. **开始使用**
-   - 按照上述使用方式中的步骤操作
-   - 遇到问题查看文档或提交 Issue
+**新用户请先阅读**：[快速开始指南](./docs/边做边学/快速开始指南.md)
 
 ## 示例代码
 
