@@ -40,7 +40,7 @@ cd <project_name>
 pip install -r requirements.txt
 
 # 配置环境变量
-cp .env.example .env
+cp env.example .env
 # 编辑 .env 文件
 
 # 初始化数据库

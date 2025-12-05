@@ -41,12 +41,15 @@ def main():
     # 获取变量值，默认为 'y'（包含）
     include_celery = context.get("include_celery", "y")
     include_websocket = context.get("include_websocket", "n")
+    install_pgvector = context.get("install_pgvector", "n")
+    database_type = context.get("database_type", "postgresql")
     
     project_dir = os.getcwd()
     
     print("开始后处理...")
     print(f"  include_celery: {include_celery}")
     print(f"  include_websocket: {include_websocket}")
+    print(f"  install_pgvector: {install_pgvector}")
     
     # 删除不需要的 Celery 相关文件
     if include_celery != "y":
@@ -62,6 +65,33 @@ def main():
         remove_path(os.path.join(project_dir, "tests", "test_websocket.py"))
         remove_path(os.path.join(project_dir, "tests", "websocket_test.html"))
         print("  ✓ 已移除 WebSocket 相关文件")
+    
+    # 数据库初始化提示
+    print()
+    print("=" * 60)
+    print("数据库初始化提示")
+    print("=" * 60)
+    print("项目已生成，下一步操作：")
+    print()
+    print("1. 配置环境变量（复制 env.example 为 .env 并修改）：")
+    print("   cp env.example .env")
+    print("   # 编辑 .env 文件，至少配置 DATABASE_URL")
+    if database_type == "postgresql" and install_pgvector == "y":
+        print()
+        print("2. 运行数据库初始化脚本（可选安装 pgvector 扩展）：")
+        print("   python scripts/init_db.py --install-pgvector")
+    else:
+        print()
+        print("2. 运行数据库初始化脚本：")
+        print("   python scripts/init_db.py")
+    print()
+    print("3. 运行数据库迁移：")
+    print("   alembic upgrade head")
+    print()
+    print("4. 启动应用：")
+    print("   uvicorn app.main:app --reload")
+    print("=" * 60)
+    print()
     
     print("后处理完成！")
 

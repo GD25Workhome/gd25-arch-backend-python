@@ -404,7 +404,7 @@ pip install -r requirements.txt
 pip install -r requirements-dev.txt
 
 # 5. 创建环境变量文件
-cp .env.example .env
+cp env.example .env
 # 编辑 .env 文件，配置数据库等
 
 # 6. 初始化数据库

@@ -50,7 +50,7 @@ pip install -r requirements-dev.txt
 
 ```bash
 # 复制环境变量示例文件
-cp .env.example .env
+cp env.example .env
 
 # 编辑 .env 文件，填写实际配置值
 # 至少需要配置 DATABASE_URL
@@ -111,7 +111,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ├── alembic/               # 数据库迁移脚本
 ├── requirements.txt       # 核心依赖
 ├── requirements-dev.txt   # 开发依赖
-├── .env.example           # 环境变量示例
+├── env.example            # 环境变量示例
 ├── pytest.ini            # 测试配置
 ├── alembic.ini            # 数据库迁移配置
 └── pyproject.toml         # 项目元数据
@@ -121,7 +121,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 ### 环境变量
 
-主要配置项（详细说明见 `.env.example`）：
+主要配置项（详细说明见 `env.example`）：
 
 - `APP_NAME` - 应用名称
 - `APP_VERSION` - 应用版本
@@ -224,7 +224,7 @@ cd my-awesome-api
 pip install -r requirements.txt
 
 # 6. 配置环境变量
-cp .env.example .env
+cp env.example .env
 # 编辑 .env 文件
 
 # 7. 初始化数据库
