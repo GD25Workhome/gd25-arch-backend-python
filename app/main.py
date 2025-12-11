@@ -18,6 +18,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import settings
@@ -248,6 +249,34 @@ async def general_exception_handler(request: Request, exc: Exception):
 
 # ==================== 基础路由 ====================
 
+@app.get("/", tags=["系统"])
+async def root() -> Dict[str, Any]:
+    """
+    根路径接口
+    
+    返回应用的基本信息和可用端点。
+    
+    Returns:
+        dict: 应用信息和可用端点
+    """
+    return success_response(
+        data={
+            "app_name": settings.app_name,
+            "version": settings.app_version,
+            "environment": settings.environment,
+            "endpoints": {
+                "health": "/health",
+                "version": "/version",
+                "docs": "/docs",
+                "redoc": "/redoc",
+                "admin": "/admin",
+                "api": "/api/v1",
+            },
+        },
+        message="欢迎使用 FastAPI 后端服务"
+    )
+
+
 @app.get("/health", tags=["系统"])
 async def health_check() -> Dict[str, Any]:
     """
@@ -315,7 +344,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str):
     Example:
         ```javascript
         // 客户端连接示例
-        const ws = new WebSocket('ws://localhost:8000/ws/test_user');
+        const ws = new WebSocket('ws://localhost:8090/ws/test_user');
         
         ws.onopen = () => {
             console.log('Connected');
@@ -362,10 +391,41 @@ async def websocket_stats() -> Dict[str, Any]:
 
 # ==================== API 路由注册 ====================
 
-# 这里可以注册其他 API 路由
-# 示例：
-# from app.api import router as api_router
-# app.include_router(api_router, prefix="/api/v1", tags=["API"])
+# 注册用户 API 路由
+from app.api import users as users_router
+app.include_router(users_router.router, prefix="/api/v1", tags=["用户"])
+
+# 注册管理后台 API 路由
+from app.api import admin as admin_router
+app.include_router(admin_router.router, prefix="/api/v1", tags=["管理后台"])
+
+# ==================== 静态文件服务 ====================
+
+# 注册静态文件服务（用于管理界面）
+try:
+    import os
+    static_dir = os.path.join(os.path.dirname(__file__), "static")
+    if os.path.exists(static_dir):
+        app.mount("/static", StaticFiles(directory=static_dir), name="static")
+        
+        # 管理界面路由（重定向到静态文件）
+        @app.get("/admin", tags=["管理后台"])
+        async def admin_index():
+            """
+            管理后台首页
+            
+            重定向到管理界面静态文件。
+            """
+            from fastapi.responses import FileResponse
+            admin_html = os.path.join(static_dir, "admin", "index.html")
+            if os.path.exists(admin_html):
+                return FileResponse(admin_html)
+            return JSONResponse(
+                status_code=404,
+                content={"message": "管理界面文件未找到"}
+            )
+except Exception as e:
+    logger.warning(f"静态文件服务注册失败: {e}")
 
 
 # ==================== 导出 ====================

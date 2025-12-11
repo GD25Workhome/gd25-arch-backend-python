@@ -213,7 +213,7 @@
 
         function connect() {
             const userId = userIdInput.value.trim() || 'test_user';
-            const wsUrl = `ws://localhost:8000/ws/${userId}`;
+            const wsUrl = `ws://localhost:8090/ws/${userId}`;
             
             updateStatus('connecting', '连接中...');
             addMessage('system', `正在连接到 ${wsUrl}...`);

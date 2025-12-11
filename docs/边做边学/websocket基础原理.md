@@ -525,7 +525,7 @@ await manager.broadcast({
 **Nginx 配置示例：**
 ```nginx
 upstream websocket {
-    server 127.0.0.1:8000;
+    server 127.0.0.1:8090;
     server 127.0.0.1:8001;
 }
 
@@ -754,7 +754,7 @@ await manager.send_personal_message(
 
 **客户端：**
 ```javascript
-const ws = new WebSocket('ws://localhost:8000/ws/test_user');
+const ws = new WebSocket('ws://localhost:8090/ws/test_user');
 
 ws.onmessage = (event) => {
     const data = JSON.parse(event.data);

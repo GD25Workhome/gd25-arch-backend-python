@@ -23,20 +23,20 @@
 
 ```bash
 # 方式一：使用 uvicorn 直接启动
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8090
 
 # 方式二：使用项目启动脚本
 bash scripts/start_dev.sh
 ```
 
-服务启动后，WebSocket 端点地址为：`ws://localhost:8000/ws/{user_id}`
+服务启动后，WebSocket 端点地址为：`ws://localhost:8090/ws/{user_id}`
 
 ### 2. 确认服务运行
 
 访问健康检查接口确认服务正常运行：
 
 ```bash
-curl http://localhost:8000/health
+curl http://localhost:8090/health
 ```
 
 ---
@@ -60,7 +60,7 @@ curl http://localhost:8000/health
 
 ```javascript
 // 创建 WebSocket 连接
-const ws = new WebSocket('ws://localhost:8000/ws/test_user');
+const ws = new WebSocket('ws://localhost:8090/ws/test_user');
 
 // 连接成功
 ws.onopen = () => {
@@ -137,7 +137,7 @@ ws.send(JSON.stringify({
 
 如果遇到以下错误：
 ```
-Refused to connect to 'ws://localhost:8000/ws/test_user' because it violates 
+Refused to connect to 'ws://localhost:8090/ws/test_user' because it violates 
 the following Content Security Policy directive: "connect-src ..."
 ```
 
@@ -212,7 +212,7 @@ the following Content Security Policy directive: "connect-src ..."
 
 ```javascript
 // 创建 WebSocket 连接
-const ws = new WebSocket('ws://localhost:8000/ws/test_user');
+const ws = new WebSocket('ws://localhost:8090/ws/test_user');
 
 // 连接成功
 ws.onopen = () => {
@@ -289,7 +289,7 @@ ws.send(JSON.stringify({
 
 如果遇到以下错误：
 ```
-Refused to connect to 'ws://localhost:8000/ws/test_user' because it violates 
+Refused to connect to 'ws://localhost:8090/ws/test_user' because it violates 
 the following Content Security Policy directive: "connect-src ..."
 ```
 
@@ -360,14 +360,14 @@ python tests/test_websocket.py
 npm install -g wscat
 
 # 或使用 npx（无需安装）
-npx wscat -c ws://localhost:8000/ws/test_user
+npx wscat -c ws://localhost:8090/ws/test_user
 ```
 
 #### 使用示例
 
 ```bash
 # 连接到 WebSocket
-wscat -c ws://localhost:8000/ws/test_user
+wscat -c ws://localhost:8090/ws/test_user
 
 # 连接成功后，可以输入消息：
 {"type":"ping","timestamp":1234567890}
@@ -415,7 +415,7 @@ async def test_websocket(user_id: str = "test_user"):
     Args:
         user_id: 用户 ID
     """
-    uri = f"ws://localhost:8000/ws/{user_id}"
+    uri = f"ws://localhost:8090/ws/{user_id}"
     
     try:
         print(f"🔌 正在连接到 {uri}...")
@@ -594,15 +594,15 @@ python tests/websocket_client_test.py my_user
 **原因：** 服务未启动或端口不正确
 
 **解决方法：**
-1. 确认服务已启动：`curl http://localhost:8000/health`
-2. 检查端口是否正确（默认 8000）
+1. 确认服务已启动：`curl http://localhost:8090/health`
+2. 检查端口是否正确（默认 8090）
 3. 检查防火墙设置
 
 ### Q2: 浏览器控制台提示 CSP 错误（Content Security Policy）
 
 **错误信息：**
 ```
-Refused to connect to 'ws://localhost:8000/ws/test_user' because it violates 
+Refused to connect to 'ws://localhost:8090/ws/test_user' because it violates 
 the following Content Security Policy directive: "connect-src ..."
 ```
 
@@ -641,7 +641,7 @@ the following Content Security Policy directive: "connect-src ..."
 
 1. **使用 API 接口触发**（需要实现）：
    ```bash
-   curl -X POST http://localhost:8000/api/broadcast \
+   curl -X POST http://localhost:8090/api/broadcast \
      -H "Content-Type: application/json" \
      -d '{"message": "广播消息"}'
    ```

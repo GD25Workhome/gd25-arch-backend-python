@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统管理后台 - {{APP_NAME}}</title>
+    <link rel="stylesheet" href="/static/admin/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <h1>系统管理后台</h1>
+            <div class="header-info">
+                <span id="app-name">系统管理</span>
+                <span class="version" id="app-version">v1.0.0</span>
+            </div>
+        </header>
+
+        <!-- 导航栏 -->
+        <nav class="nav">
+            <button class="nav-btn active" data-page="overview">系统概览</button>
+            <button class="nav-btn" data-page="users">用户管理</button>
+            <button class="nav-btn" data-page="system">系统信息</button>
+            <button class="nav-btn" data-page="database">数据库</button>
+        </nav>
+
+        <!-- 内容区域 -->
+        <main class="main">
+            <!-- 系统概览页面 -->
+            <div id="page-overview" class="page active">
+                <h2>系统概览</h2>
+                
+                <!-- 健康状态卡片 -->
+                <div class="card">
+                    <h3>系统健康状态</h3>
+                    <div class="health-status" id="health-status">
+                        <div class="loading">加载中...</div>
+                    </div>
+                </div>
+
+                <!-- 统计卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">用户总数</div>
+                        <div class="stat-value" id="stat-users-total">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">活跃用户</div>
+                        <div class="stat-value" id="stat-users-active">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">数据库状态</div>
+                        <div class="stat-value" id="stat-db-status">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">运行环境</div>
+                        <div class="stat-value" id="stat-environment">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 用户管理页面 -->
+            <div id="page-users" class="page">
+                <h2>用户管理</h2>
+                
+                <!-- 搜索和操作栏 -->
+                <div class="toolbar">
+                    <input type="text" id="user-search" placeholder="搜索用户..." class="search-input">
+                    <button class="btn btn-primary" id="btn-refresh-users">刷新</button>
+                </div>
+
+                <!-- 用户列表 -->
+                <div class="card">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>用户名</th>
+                                    <th>邮箱</th>
+                                    <th>状态</th>
+                                    <th>创建时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <tr>
+                                    <td colspan="6" class="loading">加载中...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="users-pagination"></div>
+                </div>
+            </div>
+
+            <!-- 系统信息页面 -->
+            <div id="page-system" class="page">
+                <h2>系统信息</h2>
+                
+                <div class="card">
+                    <h3>基本信息</h3>
+                    <div class="info-grid" id="system-info-grid">
+                        <div class="loading">加载中...</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>配置信息</h3>
+                    <div class="info-grid" id="config-info-grid">
+                        <div class="loading">加载中...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据库页面 -->
+            <div id="page-database" class="page">
+                <h2>数据库信息</h2>
+                
+                <div class="card">
+                    <h3>连接状态</h3>
+                    <div class="info-grid" id="database-info-grid">
+                        <div class="loading">加载中...</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>统计信息</h3>
+                    <div class="info-grid" id="database-stats-grid">
+                        <div class="loading">加载中...</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 底部 -->
+        <footer class="footer">
+            <p>系统管理后台 - 仅供内部使用</p>
+        </footer>
+    </div>
+
+    <!-- 消息提示 -->
+    <div id="toast" class="toast"></div>
+
+    <script src="/static/admin/app.js"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
-# {{ cookiecutter.project_name }} - 开发依赖
-# Python {{ cookiecutter.python_version }}+
+# FastAPI 后端脚手架 - 开发依赖
+# Python 3.10+
 
 # 包含核心依赖
 -r requirements.txt

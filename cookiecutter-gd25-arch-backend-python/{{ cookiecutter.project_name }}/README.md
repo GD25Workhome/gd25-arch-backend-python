@@ -65,11 +65,11 @@ cp env.example .env
 uvicorn app.main:app --reload
 
 # 指定主机和端口
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8090
 
 # 访问 API 文档
-# Swagger UI: http://localhost:8000/docs
-# ReDoc: http://localhost:8000/redoc
+# Swagger UI: http://localhost:8090/docs
+# ReDoc: http://localhost:8090/redoc
 ```
 
 **命令说明：**
@@ -253,7 +253,7 @@ uvicorn app.main:app --reload
 
 **使用示例代码**：
 1. 在 `app/main.py` 中注册路由：`app.include_router(users_router, prefix="/api/v1")`
-2. 访问 API 文档：http://localhost:8000/docs
+2. 访问 API 文档：http://localhost:8090/docs
 3. 详细说明请参考：[示例代码使用说明](./docs/边做边学/示例代码使用说明.md)
 
 ## 文档

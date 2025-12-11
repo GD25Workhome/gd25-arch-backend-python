@@ -50,7 +50,7 @@ class Settings(BaseSettings):
 
     # ==================== 应用配置 ====================
     app_name: str = Field(
-        default="{{ cookiecutter.project_name }}",
+        default="gd25-arch-backend",
         description="应用名称",
     )
     app_version: str = Field(
@@ -203,7 +203,7 @@ class Settings(BaseSettings):
         description="服务器监听地址",
     )
     port: int = Field(
-        default=8000,
+        default=8090,
         description="服务器监听端口",
         ge=1,
         le=65535,

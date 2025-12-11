@@ -1,13 +1,13 @@
 [project]
-name = "{{ cookiecutter.project_name }}"
+name = "gd25-arch-backend-python"
 version = "1.0.0"
-description = "{{ cookiecutter.project_description }}"
+description = "FastAPI 后端脚手架 - 通用的项目基础框架"
 readme = "README.md"
-requires-python = ">={{ cookiecutter.python_version }}"
+requires-python = ">=3.10"
 license = {text = "MIT"}
 
 authors = [
-    {name = "{{ cookiecutter.author_name }}", email = "{{ cookiecutter.author_email }}"}
+    {name = "GD25 Team"}
 ]
 
 keywords = ["fastapi", "scaffold", "backend", "template"]
@@ -42,7 +42,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.black]
 line-length = 100
-target-version = ['py{{ cookiecutter.python_version|replace(".", "") }}']
+target-version = ['py310']
 include = '\.pyi?$'
 
 [tool.isort]
@@ -51,7 +51,7 @@ line_length = 100
 known_first_party = ["app"]
 
 [tool.mypy]
-python_version = "{{ cookiecutter.python_version }}"
+python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false
