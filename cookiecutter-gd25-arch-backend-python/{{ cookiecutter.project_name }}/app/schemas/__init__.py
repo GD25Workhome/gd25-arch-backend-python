@@ -4,7 +4,7 @@ Schema 模块
 导出所有 Schema，方便统一导入。
 """
 
-from app.schemas.user import (
+from app.schemas.user_schema import (
     UserBase,
     UserCreate,
     UserUpdate,

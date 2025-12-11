@@ -4,7 +4,7 @@
 导出所有数据模型，方便统一导入。
 """
 
-from app.models.user import User
+from app.models.user_model import User
 
 __all__ = ["User"]
 

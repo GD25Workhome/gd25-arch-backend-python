@@ -18,7 +18,7 @@ class User(BaseModel):
     
     示例：
         ```python
-        from app.models.user import User
+        from app.models.user_model import User
         from app.db.session import get_db_session
         
         db = get_db_session()
@@ -73,4 +73,3 @@ class User(BaseModel):
     def __repr__(self) -> str:
         """返回模型的字符串表示"""
         return f"<User(id={self.id}, name='{self.name}', email='{self.email}')>"
-

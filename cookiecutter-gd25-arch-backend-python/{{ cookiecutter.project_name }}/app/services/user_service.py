@@ -8,9 +8,9 @@ from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
-from app.models.user import User
+from app.models.user_model import User
 from app.repositories.user_repository import UserRepository
-from app.schemas.user import UserCreate, UserUpdate
+from app.schemas.user_schema import UserCreate, UserUpdate
 from app.utils.exceptions import NotFoundError, ValidationError
 
 

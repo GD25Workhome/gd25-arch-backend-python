@@ -264,6 +264,8 @@ cookiecutter https://github.com/your-org/cookiecutter-gd25-arch-backend-python
 
 **模板位置**：`cookiecutter-gd25-arch-backend-python/`（在当前项目根目录下）
 
+**模版同步**：修改项目代码后，需要同步到模版。请参考 [模版同步指南](./docs/模版同步指南.md)
+
 ## 快速开始（新用户必读）
 
 **推荐流程：**
@@ -284,8 +286,8 @@ cookiecutter https://github.com/your-org/cookiecutter-gd25-arch-backend-python
 
 脚手架提供了完整的用户管理示例代码，展示如何从 Model 到 API 的完整开发流程：
 
-- **Model 示例**：`app/models/user.py` - 数据模型定义
-- **Schema 示例**：`app/schemas/user.py` - 数据验证和序列化
+- **Model 示例**：`app/models/user_model.py` - 数据模型定义
+- **Schema 示例**：`app/schemas/user_schema.py` - 数据验证和序列化
 - **Repository 示例**：`app/repositories/user_repository.py` - 数据访问层
 - **Service 示例**：`app/services/user_service.py` - 业务逻辑层
 - **API 示例**：`app/api/users.py` - API 路由
@@ -299,6 +301,7 @@ cookiecutter https://github.com/your-org/cookiecutter-gd25-arch-backend-python
 
 - [快速开始指南](./docs/边做边学/快速开始指南.md) - 10 分钟快速启动新项目
 - [CookieCutter 使用指南](./docs/边做边学/CookieCutter使用指南.md) - CookieCutter 模板使用指南（推荐）
+- [模版同步指南](./docs/模版同步指南.md) - 如何将项目代码同步到模版（开发者必读）
 - [示例代码使用说明](./docs/边做边学/示例代码使用说明.md) - 完整的示例代码说明
 - [启动方式说明](./docs/边做边学/启动方式说明.md) - 详细的启动方式说明
 - [测试执行说明](./docs/边做边学/测试执行说明.md) - 测试执行指南

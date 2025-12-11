@@ -10,14 +10,14 @@ from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
 from app.services.user_service import UserService
-from app.schemas.user import (
+from app.schemas.user_schema import (
     UserCreate,
     UserUpdate,
     UserResponse,
     UserListResponse,
 )
 from app.repositories.base import PaginationResult
-from app.models.user import User
+from app.models.user_model import User
 from app.utils.response import success_response
 
 # 创建路由器

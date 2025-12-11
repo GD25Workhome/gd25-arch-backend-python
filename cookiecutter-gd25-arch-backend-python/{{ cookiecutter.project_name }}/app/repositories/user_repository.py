@@ -8,7 +8,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 
-from app.models.user import User
+from app.models.user_model import User
 from app.repositories.base import BaseRepository, PaginationParams, PaginationResult
 
 
