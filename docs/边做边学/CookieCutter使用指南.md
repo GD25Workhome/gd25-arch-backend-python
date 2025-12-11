@@ -525,9 +525,333 @@ uvicorn app.main:app --reload
 
 ---
 
-## 七、常见问题和注意事项
+## 七、将文档添加到 CookieCutter 模板
 
-### 7.1 常见问题
+### 7.1 为什么需要将文档添加到模板？
+
+当你在项目中创建了操作手册、使用指南等文档后，希望这些文档也能包含在通过模板生成的新项目中，这样：
+
+- ✅ 新项目自动包含完整的操作文档
+- ✅ 团队成员可以快速了解如何使用各个模块
+- ✅ 减少重复编写文档的工作
+
+### 7.2 操作步骤概述
+
+将文档添加到 CookieCutter 模板的完整流程：
+
+```
+1. 准备文档 → 2. 配置同步脚本 → 3. 试运行验证 → 4. 执行同步 
+   → 5. 验证结果 → 6. 测试模板生成 → 7. 提交更改
+```
+
+**快速操作（如果同步脚本已配置）：**
+
+```bash
+# 如果同步脚本中已包含 "docs/知识整理/"，直接执行：
+python scripts/sync_template.py --dry-run  # 先预览
+python scripts/sync_template.py            # 实际同步
+```
+
+**详细步骤请参考下面的章节。**
+
+### 7.3 添加文档到模板的详细步骤
+
+#### 步骤 1：准备文档
+
+确保文档已经创建并放在合适的位置，例如：
+
+```
+docs/
+└── 知识整理/
+    ├── 101-Alembic操作手册.md
+    ├── 102-Requirements操作手册.md
+    ├── 103-Pytest操作手册.md
+    └── 104-CookieCutter操作手册.md
+```
+
+#### 步骤 2：修改同步脚本
+
+编辑 `scripts/sync_template.py`，在 `SYNC_PATHS` 列表中添加文档路径：
+
+```python
+# 需要同步的目录和文件
+SYNC_PATHS = [
+    "app/",
+    "alembic/",
+    "tests/",
+    "scripts/",
+    "requirements.txt",
+    "requirements-dev.txt",
+    "requirements.lock",
+    "pyproject.toml",
+    "pytest.ini",
+    "alembic.ini",
+    "env.example",
+    "LICENSE",
+    "docs/知识整理/",  # 添加文档目录
+]
+```
+
+**注意：**
+- 如果 `EXCLUDE_PATTERNS` 中有 `"docs/"`，需要确保不会排除你要同步的文档目录
+- 可以添加更具体的路径，如 `"docs/知识整理/"` 而不是整个 `"docs/"`
+
+#### 步骤 3：检查排除规则
+
+检查 `EXCLUDE_PATTERNS` 列表，确保不会排除你要同步的文档：
+
+```python
+EXCLUDE_PATTERNS = [
+    # ... 其他排除规则
+    "docs/",  # 如果整个 docs/ 被排除，需要修改为更具体的排除规则
+    # 或者改为：
+    # "docs/边做边学/",  # 只排除特定子目录
+    # "docs/开发计划.md",  # 只排除特定文件
+]
+```
+
+**建议：**
+- 如果只需要同步 `docs/知识整理/`，可以保持 `"docs/"` 在排除列表中
+- 在 `SYNC_PATHS` 中使用具体路径 `"docs/知识整理/"` 来覆盖排除规则
+
+#### 步骤 4：执行同步（试运行）
+
+先使用 `--dry-run` 参数预览将要执行的操作：
+
+```bash
+python scripts/sync_template.py --dry-run
+```
+
+**检查输出：**
+- 确认会同步 `docs/知识整理/` 目录
+- 确认不会同步其他不需要的文档
+- 确认不会删除模板中已有的文档
+
+#### 步骤 5：执行同步
+
+确认无误后，执行实际同步：
+
+```bash
+python scripts/sync_template.py
+```
+
+#### 步骤 6：验证同步结果
+
+检查模板目录中是否包含文档：
+
+```bash
+# 检查文档是否已同步到模板
+ls -la "cookiecutter-gd25-arch-backend-python/{{ cookiecutter.project_name }}/docs/知识整理/"
+
+# 或使用转义
+ls -la cookiecutter-gd25-arch-backend-python/\{\{\ cookiecutter.project_name\ \}\}/docs/知识整理/
+```
+
+#### 步骤 7：测试模板生成
+
+使用模板生成测试项目，验证文档是否正确包含：
+
+```bash
+# 生成测试项目
+cookiecutter cookiecutter-gd25-arch-backend-python --no-input \
+  --overwrite-if-exists
+
+# 进入生成的项目
+cd my-project
+
+# 检查文档是否存在
+ls -la docs/知识整理/
+
+# 验证文档内容
+cat docs/知识整理/101-Alembic操作手册.md | head -20
+
+# 清理测试项目
+cd ..
+rm -rf my-project
+```
+
+### 7.4 注意事项
+
+#### 7.3.1 文档中的变量替换
+
+如果文档中包含项目特定的信息，可以使用 CookieCutter 变量：
+
+**文档示例：**
+```markdown
+# {{ cookiecutter.project_name }} - Alembic 操作手册
+
+本项目使用 Alembic 进行数据库迁移管理。
+```
+
+**注意：**
+- 文档中的变量会在生成项目时自动替换
+- 确保变量名与 `cookiecutter.json` 中的变量名一致
+
+#### 7.3.2 文档路径和结构
+
+- ✅ **保持路径一致**：模板中的文档路径应与项目中的路径一致
+- ✅ **目录结构**：如果文档在子目录中，确保目录结构正确
+- ✅ **文件命名**：使用清晰的命名规范，便于查找
+
+#### 7.3.3 文档更新流程
+
+当文档更新后：
+
+1. **更新项目文档**：在项目的 `docs/` 目录中更新文档
+2. **同步到模板**：运行 `python scripts/sync_template.py` 同步到模板
+3. **验证模板**：测试模板生成，确认文档正确
+4. **提交更改**：提交模板目录的更改
+
+### 7.5 完整示例：添加操作手册到模板
+
+**场景：** 将 `docs/知识整理/` 目录添加到模板
+
+**操作步骤：**
+
+```bash
+# 1. 编辑同步脚本
+# 在 scripts/sync_template.py 的 SYNC_PATHS 中添加：
+# "docs/知识整理/",
+
+# 2. 试运行查看预览
+python scripts/sync_template.py --dry-run
+
+# 3. 确认无误后执行同步
+python scripts/sync_template.py
+
+# 4. 验证同步结果
+ls -la "cookiecutter-gd25-arch-backend-python/{{ cookiecutter.project_name }}/docs/知识整理/"
+
+# 5. 测试模板生成
+cookiecutter cookiecutter-gd25-arch-backend-python --no-input \
+  --overwrite-if-exists project_name=test-project
+cd test-project
+ls -la docs/知识整理/
+cd ..
+rm -rf test-project
+
+# 6. 提交更改
+git add cookiecutter-gd25-arch-backend-python/
+git add scripts/sync_template.py
+git commit -m "添加操作手册文档到 CookieCutter 模板"
+```
+
+### 7.6 常见问题
+
+#### Q1: 同步脚本提示文档被排除
+
+**问题：** 运行同步脚本时，文档没有被同步
+
+**原因：** `EXCLUDE_PATTERNS` 中可能包含了 `"docs/"`，导致整个 docs 目录被排除
+
+**解决：**
+1. 检查 `EXCLUDE_PATTERNS` 列表
+2. 如果使用 `"docs/知识整理/"` 作为同步路径，确保路径正确
+3. 或者修改排除规则，只排除不需要的文档目录
+
+#### Q2: 模板生成后文档路径不正确
+
+**问题：** 生成的项目中，文档不在预期位置
+
+**原因：** 同步时的路径与模板中的路径不一致
+
+**解决：**
+1. 检查同步脚本中的路径是否正确
+2. 检查模板目录结构
+3. 确保路径使用相对路径（相对于项目根目录）
+
+#### Q3: 文档中的变量没有被替换
+
+**问题：** 生成的项目中，文档仍包含 `{{ cookiecutter.xxx }}` 变量
+
+**原因：** 文档文件可能被当作二进制文件处理，或者变量语法错误
+
+**解决：**
+1. 确保文档是文本文件（.md, .txt 等）
+2. 检查变量语法：`{{ cookiecutter.variable_name }}`
+3. 确保变量名与 `cookiecutter.json` 中的变量名一致
+
+### 7.7 操作步骤总结
+
+**将 `docs/知识整理/` 添加到 CookieCutter 模板的完整操作步骤：**
+
+#### 步骤 1：确认同步脚本配置
+
+检查 `scripts/sync_template.py` 中的 `SYNC_PATHS` 是否包含：
+
+```python
+SYNC_PATHS = [
+    # ... 其他路径
+    "docs/知识整理/",  # 操作手册文档
+]
+```
+
+**如果已包含，直接跳到步骤 3。**
+
+#### 步骤 2：添加同步路径（如未配置）
+
+编辑 `scripts/sync_template.py`，在 `SYNC_PATHS` 列表中添加：
+
+```python
+"docs/知识整理/",
+```
+
+#### 步骤 3：执行同步
+
+```bash
+# 1. 先试运行查看预览
+python scripts/sync_template.py --dry-run
+
+# 2. 确认无误后执行实际同步
+python scripts/sync_template.py
+```
+
+#### 步骤 4：验证同步结果
+
+```bash
+# 检查模板中的文档
+ls -la "cookiecutter-gd25-arch-backend-python/{{ cookiecutter.project_name }}/docs/知识整理/"
+```
+
+应该看到 4 个操作手册文件：
+- `101-Alembic操作手册.md`
+- `102-Requirements操作手册.md`
+- `103-Pytest操作手册.md`
+- `104-CookieCutter操作手册.md`
+
+#### 步骤 5：测试模板生成（可选但推荐）
+
+```bash
+# 生成测试项目
+cookiecutter cookiecutter-gd25-arch-backend-python --no-input \
+  --overwrite-if-exists
+
+# 进入生成的项目
+cd my-project
+
+# 验证文档是否存在
+ls -la docs/知识整理/
+
+# 清理测试项目
+cd ..
+rm -rf my-project
+```
+
+#### 步骤 6：提交更改
+
+```bash
+git add cookiecutter-gd25-arch-backend-python/
+git add scripts/sync_template.py  # 如果修改了同步脚本
+git commit -m "同步操作手册文档到 CookieCutter 模板"
+```
+
+**完成！** 现在通过模板生成的新项目将自动包含这些操作手册文档。
+
+---
+
+## 八、常见问题和注意事项
+
+### 8.1 常见问题
 
 #### Q1: CookieCutter 提示找不到模板
 

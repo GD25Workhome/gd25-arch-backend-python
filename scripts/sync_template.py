@@ -46,6 +46,7 @@ SYNC_PATHS = [
     "alembic.ini",
     "env.example",
     "LICENSE",
+    "docs/知识整理/",  # 操作手册文档
 ]
 
 # 需要排除的文件和目录模式
@@ -82,7 +83,8 @@ EXCLUDE_PATTERNS = [
     ".ruff_cache/",
     "htmlcov/",
     ".tox/",
-    "docs/",  # 文档目录不同步（模版有自己的文档）
+    "docs/边做边学/",  # 排除边做边学文档（模版有自己的文档）
+    "docs/开发计划.md",  # 排除开发计划（模版有自己的）
     "cursor_test/",
     "cursor_docs/",
     "README.md",  # README 不同步（模版有自己的 README）
