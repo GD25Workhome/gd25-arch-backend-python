@@ -344,7 +344,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str):
     Example:
         ```javascript
         // 客户端连接示例
-        const ws = new WebSocket('ws://localhost:8090/ws/test_user');
+        const ws = new WebSocket('ws://localhost:{{ cookiecutter.port }}/ws/test_user');
         
         ws.onopen = () => {
             console.log('Connected');

@@ -5,5 +5,5 @@
 # source venv/bin/activate
 
 # 启动开发服务器（带自动重载）
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8090
+uvicorn app.main:app --reload --host 0.0.0.0 --port {{ cookiecutter.port }}
 

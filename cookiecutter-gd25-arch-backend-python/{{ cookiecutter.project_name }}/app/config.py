@@ -203,7 +203,7 @@ class Settings(BaseSettings):
         description="服务器监听地址",
     )
     port: int = Field(
-        default=8090,
+        default={{ cookiecutter.port }},
         description="服务器监听端口",
         ge=1,
         le=65535,

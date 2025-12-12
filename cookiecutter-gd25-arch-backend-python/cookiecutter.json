@@ -7,6 +7,7 @@
   "include_celery": "y",
   "include_websocket": "n",
   "database_type": "postgresql",
-  "install_pgvector": "n"
+  "install_pgvector": "n",
+  "port": "8100"
 }
 

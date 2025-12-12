@@ -3,7 +3,7 @@
 
 # Web 框架
 fastapi>=0.104.0,<1.0.0
-uvicorn[standard]>=0.24.0,<1.0.0
+uvicorn[standard]>=0.24.0,<1.0.0  # [standard] 包含 websockets、httptools、uvloop 等
 
 # 数据库
 sqlalchemy>=2.0.0,<3.0.0

@@ -9,7 +9,7 @@
 gunicorn app.main:app \
     --workers 4 \
     --worker-class uvicorn.workers.UvicornWorker \
-    --bind 0.0.0.0:8090 \
+    --bind 0.0.0.0:8100 \
     --access-logfile - \
     --error-logfile -
 
