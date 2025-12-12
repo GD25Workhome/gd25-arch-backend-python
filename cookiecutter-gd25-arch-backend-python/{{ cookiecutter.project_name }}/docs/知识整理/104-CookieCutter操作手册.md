@@ -268,7 +268,7 @@ uvicorn app.main:app --reload
 
 ### 8.1 模板变量未替换
 
-**问题：** 生成的项目中仍有 `{{ cookiecutter.xxx }}` 变量
+**问题：** 生成的项目中仍有 `{{ "{{" }} cookiecutter.xxx {{ "}}" }}` 变量
 
 **原因：** 模板文件格式错误或变量名不匹配
 

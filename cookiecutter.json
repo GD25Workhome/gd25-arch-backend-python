@@ -6,6 +6,7 @@
   "python_version": "3.11",
   "include_celery": "y",
   "include_websocket": "n",
-  "database_type": "postgresql"
+  "database_type": "postgresql",
+  "database_name": "backend_python"
 }
 

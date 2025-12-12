@@ -116,6 +116,165 @@ cookiecutter /path/to/cookiecutter-template
 cookiecutter ./cookiecutter-gd25-arch-backend-python
 ```
 
+#### 3.1.1 实际案例：在另一个项目中使用本模板
+
+**场景：** 在项目 `/Users/m684620/work/github_GD25/gd25-biz-his-python` 中使用本模板生成新项目。
+
+**⚠️ 重要说明：** 如果目标项目目录已存在（如已创建的 GitHub 空项目），CookieCutter 会因目录冲突而无法直接生成。需要使用临时目录方案。
+
+**操作步骤（适用于已存在的项目目录）：**
+
+1. **确保 CookieCutter 已安装**
+   ```bash
+   # 检查是否已安装
+   cookiecutter --version
+   
+   # 如果未安装，使用 pip 安装
+   pip install cookiecutter
+   
+   # 或使用 conda 安装
+   conda install -c conda-forge cookiecutter
+   ```
+
+2. **进入目标项目的父目录**
+   ```bash
+   # 进入目标项目的父目录
+   cd /Users/m684620/work/github_GD25
+   ```
+
+3. **使用临时名称生成项目**
+   ```bash
+   # 使用模板的绝对路径，生成到临时目录
+   cookiecutter /Users/m684620/work/github_GD25/gd25-arch-backend-python/cookiecutter-gd25-arch-backend-python \
+     --output-dir . \
+     --no-input \
+     project_name=_temp_gd25_biz_his \
+     project_description="业务历史记录服务" \
+     author_name="你的名字" \
+     author_email="your-email@example.com" \
+     python_version="3.11" \
+     include_celery="y" \
+     include_websocket="n" \
+     database_type="postgresql" \
+     install_pgvector="n"
+   ```
+
+   **交互式方式：**
+   ```bash
+   cookiecutter /Users/m684620/work/github_GD25/gd25-arch-backend-python/cookiecutter-gd25-arch-backend-python \
+     --output-dir .
+   
+   # 当提示输入项目名称时，输入临时名称：
+   # project_name [my-project]: _temp_gd25_biz_his
+   # 其他选项按需输入或使用默认值
+   ```
+
+4. **将生成的内容复制到项目目录**
+   ```bash
+   # 进入项目目录
+   cd /Users/m684620/work/github_GD25/gd25-biz-his-python
+   
+   # 复制临时目录内容（排除 .git，保留原有的 Git 仓库）
+   rsync -av --exclude='.git' ../_temp_gd25_biz_his/ .
+   
+   # 如果 rsync 不可用，使用 cp 命令：
+   # cp -r ../_temp_gd25_biz_his/* .
+   ```
+
+5. **清理临时目录**
+   ```bash
+   # 返回父目录
+   cd /Users/m684620/work/github_GD25
+   
+   # 删除临时目录
+   rm -rf _temp_gd25_biz_his
+   ```
+
+6. **验证生成的项目**
+   ```bash
+   # 进入项目目录
+   cd /Users/m684620/work/github_GD25/gd25-biz-his-python
+   
+   # 查看项目结构
+   ls -la
+   
+   # 应该看到完整的项目结构：
+   # app/, tests/, alembic/, requirements.txt, pyproject.toml 等
+   # 同时保留原有的 .git 目录
+   ```
+
+7. **初始化生成的项目**
+   ```bash
+   # 1. 添加文件到 Git（保留原有的 Git 仓库）
+   git add .
+   git commit -m "Initial commit: Add project structure from CookieCutter template"
+   
+   # 2. 创建 conda 虚拟环境（推荐）
+   conda create -n gd25-biz-his-python python=3.11
+   conda activate gd25-biz-his-python
+   
+   # 3. 安装依赖
+   pip install -r requirements.txt
+   pip install -r requirements-dev.txt
+   
+   # 4. 创建环境变量文件
+   cp env.example .env
+   # 编辑 .env 文件，配置数据库连接等信息
+   
+   # 5. 初始化数据库（如果使用数据库）
+   alembic revision --autogenerate -m "Initial migration"
+   alembic upgrade head
+   
+   # 6. 运行测试
+   pytest
+   
+   # 7. 启动服务
+   uvicorn app.main:app --reload
+   ```
+
+**非交互式方式（使用配置文件）：**
+
+```bash
+# 1. 创建配置文件（使用临时项目名称）
+cat > /Users/m684620/work/github_GD25/gd25-biz-his-config.json << EOF
+{
+  "project_name": "_temp_gd25_biz_his",
+  "project_description": "业务历史记录服务",
+  "author_name": "你的名字",
+  "author_email": "your-email@example.com",
+  "python_version": "3.11",
+  "include_celery": "y",
+  "include_websocket": "n",
+  "database_type": "postgresql",
+  "install_pgvector": "n"
+}
+EOF
+
+# 2. 使用配置文件生成临时项目
+cd /Users/m684620/work/github_GD25
+cookiecutter /Users/m684620/work/github_GD25/gd25-arch-backend-python/cookiecutter-gd25-arch-backend-python \
+  --config-file gd25-biz-his-config.json \
+  --no-input \
+  --output-dir .
+
+# 3. 复制内容到项目目录
+cd gd25-biz-his-python
+rsync -av --exclude='.git' ../_temp_gd25_biz_his/ .
+
+# 4. 清理临时目录和配置文件
+cd ..
+rm -rf _temp_gd25_biz_his
+rm -f gd25-biz-his-config.json
+```
+
+**注意事项：**
+- ✅ **保留 .git 目录**：复制内容时务必排除 `.git` 目录，避免覆盖原有的 Git 仓库
+- ✅ **临时项目名称**：可以使用任何临时名称，只要不与目标项目目录冲突即可
+- ✅ **使用绝对路径**：模板路径使用绝对路径最可靠，避免路径错误
+- ✅ **确保模板路径正确**：模板目录应包含 `cookiecutter.json` 文件
+
+**📖 详细操作步骤请参考：** [CookieCutter本地项目模版操作步骤.md](./CookieCutter本地项目模版操作步骤.md)
+
 ### 3.2 使用 GitHub 模板
 
 ```bash
